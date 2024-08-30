@@ -100,35 +100,32 @@ const Home: React.FC<HomeProps> = ({ onOpenSettings }) => (
 			<div className="home-page">
 				<h1>Welcome to Dev EDC</h1>
 				<p>
-					Dev EDC is your Swiss Army knife for software development.
-					Just as EDC gear prepares you for daily challenges, Dev EDC
-					equips you with essential tools for your coding journey.
+					Dev EDC is your Everyday carry for software development.
 				</p>
 				<p>
 					Before building Dev EDC, while working at my day job, I
 					would constantly find myself opening up a new tab in my
 					browser, and Googling <i>url decoder</i>, clicking on the
 					first result and pasting in the query I was debugging, or
-					Google <i>whitespace remover</i>, or{" "}
+					Googling <i>whitespace remover</i>, or{" "}
 					<i>online diff checker</i> during the course of the day.
 				</p>
 				<p>
 					I came to realise I was forever visiting the same four or
 					five websites to perform the sames tasks over and over, and
-					I thought
+					I thought I should build something that hosts all of these
+					common tools in one location, so I can have one tab always
+					open ready to quickly perform a task.
 				</p>
 				<h2>What Dev EDC Offers:</h2>
 				<ul>
 					<li>
-						<strong>Versatility:</strong> From JSON generation to
-						JWT decoding, text formatting to UUID creation, we've
-						packed a wide array of functionalities into one sleek
-						interface.
+						<strong>Versatility:</strong> A wide range of tools to
+						choose from, catering for different types of developers.
 					</li>
 					<li>
-						<strong>Efficiency:</strong> Say goodbye to browser tab
-						overload. Access all your frequently used tools in one
-						place, saving time and mental energy.
+						<strong>Efficiency:</strong> Access all your frequently
+						used tools in one place.
 					</li>
 					<li>
 						<strong>Customization:</strong> Tailor Dev EDC to your
@@ -137,17 +134,15 @@ const Home: React.FC<HomeProps> = ({ onOpenSettings }) => (
 						devices.
 					</li>
 					<li>
-						<strong>Offline Capability:</strong> No internet? No
-						problem. Dev EDC works offline, ensuring you're never
-						without your trusted toolkit.
+						<strong>Front end only:</strong> Dev EDC is a static web
+						app, allowing users to access tools without the need for
+						an internet connection.
 					</li>
 				</ul>
 				<p>
-					Explore our tools using the navigation menu, and discover
-					how Dev EDC can transform your development process. Whether
-					you're a seasoned professional or just starting your coding
-					journey, Dev EDC is here to make your life easier, one tool
-					at a time.
+					Explore our tools, customize the theme to you liking, hide any
+					tools from the navigation bar to don't require, rearrange the
+					tools, and please reach out to hello@devedc.com.
 				</p>
 				<div className="cta-container">
 					<Link to="/quick-json" className="cta-button">
