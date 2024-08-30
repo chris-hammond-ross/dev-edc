@@ -1,0 +1,75 @@
+/* ColorPaletteGenerator.css */
+.color-picker-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+}
+
+.color-palette-placeholder {
+	background-color: var(--color-main-bg);
+	border-radius: 1rem;
+	flex: 1;
+}
+
+.color-palette-preview {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.color-palette-input textarea {
+	flex: 1;
+}
+
+.color-swatch {
+	flex: 1;
+	height: 5rem;
+}
+
+.color-palette-preview .color-swatch:first-child {
+	border-top-left-radius: 1rem;
+	border-bottom-left-radius: 1rem;
+}
+
+.color-palette-preview .color-swatch:last-child {
+	border-top-right-radius: 1rem;
+	border-bottom-right-radius: 1rem;
+}
+
+.output-segment.output-palette {
+	height: 7.688rem;
+	flex: none !important;
+}
+
+/* Styles for the color wheel */
+.w-color-wheel {
+	width: 20rem !important;
+	height: 20rem !important;
+}
+
+.w-color-wheel .w-color-circle {
+	width: 100% !important;
+	height: 100% !important;
+}
+
+.w-color-wheel .w-color-block {
+	width: 1.25rem !important;
+	height: 1.25rem !important;
+}
+
+.w-color-alpha {
+	width: 100%;
+	height: 1rem;
+	border-radius: 1rem !important;
+}
+
+.w-color-alpha > div {
+	border-radius: 1rem !important;
+}
+
+.w-color-alpha-fill {
+	width: 1rem !important;
+	height: 1rem !important;
+	background-color: rgba(0, 0, 0, 0) !important;
+	border: 1px solid #fff !important;
+}

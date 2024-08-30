@@ -1,0 +1,82 @@
+/* MarkdownPreviewer.css */
+.markdown-preview {
+	background-color: var(--color-main-bg);
+	color: var(--color-text-secondary);
+	padding: 10px;
+	border-radius: 1rem;
+	overflow: auto;
+	font-size: 0.938rem;
+	flex: 1;
+}
+
+.markdown-preview h1,
+.markdown-preview h2,
+.markdown-preview h3,
+.markdown-preview h4,
+.markdown-preview h5,
+.markdown-preview h6 {
+	color: var(--color-text-main);
+	margin-top: 1em;
+	margin-bottom: 0.5em;
+}
+
+.markdown-preview p {
+	margin-bottom: 1em;
+}
+
+.markdown-preview a {
+	color: var(--color-nav-tertiary);
+	text-decoration: none;
+}
+
+.markdown-preview a:hover {
+	text-decoration: underline;
+}
+
+.markdown-preview pre {
+	background-color: var(--color-content-main-bg);
+	padding: 1em;
+	border-radius: 0.5em;
+	overflow-x: auto;
+}
+
+.markdown-preview code {
+	font-family: "IBM Plex Mono", monospace;
+	font-size: 0.9em;
+}
+
+.markdown-preview blockquote {
+	border-left: 4px solid var(--color-nav-tertiary);
+	padding-left: 1em;
+	margin-left: 0;
+	font-style: italic;
+}
+
+.markdown-preview table {
+	border-collapse: collapse;
+	width: 100%;
+	margin-bottom: 1em;
+}
+
+.markdown-preview th,
+.markdown-preview td {
+	border: 1px solid var(--color-content-tertiary-bg);
+	padding: 0.5em;
+	text-align: left;
+}
+
+.markdown-preview th {
+	background-color: var(--color-content-main-bg);
+	font-weight: bold;
+}
+
+.markdown-preview img {
+	max-width: 100%;
+	height: auto;
+}
+
+.markdown-preview hr {
+	border: none;
+	border-top: 1px solid var(--color-content-tertiary-bg);
+	margin: 1em 0;
+}

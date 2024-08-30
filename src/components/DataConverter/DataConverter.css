@@ -1,0 +1,15 @@
+/* DataConverter.css */
+
+.data-converter-input-container textarea {
+	white-space: pre;
+}
+
+/* Output highlighting */
+.data-converter-output-container .output-segment pre {
+	white-space: pre;
+	word-wrap: normal;
+}
+
+.data-converter-output-container .output-segment pre.csv-output-pre {
+	white-space: pre-wrap;
+}

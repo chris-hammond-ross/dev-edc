@@ -1,0 +1,49 @@
+/* DiffChecker.css */
+.input-wrapper {
+	flex: 1;
+	display: flex;
+}
+
+.input-wrapper.highlighted textarea {
+	color: transparent;
+	caret-color: var(--color-text-secondary);
+	background: transparent;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 2;
+}
+
+.highlight-layer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 10px;
+	font-family: monospace;
+	font-size: 0.938rem;
+	line-height: normal;
+	white-space: pre-wrap;
+	word-break: break-all;
+	overflow-y: auto;
+	pointer-events: none;
+	background-color: var(--color-main-bg);
+	border-radius: 1rem;
+	margin: 0;
+	z-index: 1;
+}
+
+.unchanged {
+	color: var(--color-text-secondary);
+}
+
+.added {
+	background-color: #144212;
+	color: #7cfc00;
+}
+
+.removed {
+	background-color: #420e0e;
+	color: #ff6b6b;
+}

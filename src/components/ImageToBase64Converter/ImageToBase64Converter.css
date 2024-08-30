@@ -1,0 +1,96 @@
+/* ImageToBase64Converter.css */
+.drop-zone-container {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.drop-zone {
+	flex: 1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: var(--color-main-bg);
+	outline: 2px dashed var(--color-text-secondary);
+	outline-offset: -2px;
+	box-sizing: border-box;
+	border-radius: 16px;
+	cursor: pointer;
+	overflow: hidden;
+}
+
+.drop-zone-input-text-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.6rem;
+	background-color: var(--color-secondary-bg);
+	padding: 1.8rem 1.4rem;
+	border-radius: 16px;
+}
+
+.error-message {
+	color: #ff6b6b;
+	text-align: center;
+	margin: 0;
+}
+
+.image-icon {
+	color: #d4d4d4;
+	opacity: 1;
+}
+
+.image-preview {
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: contain;
+}
+
+.image-converter-container .info-section {
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+}
+
+.image-to-base-info-section {
+	max-height: 8.6rem;
+}
+
+.info-section-content {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 10px;
+	font-family: "IBM Plex Mono", monospace;
+	font-size: 0.938rem;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	box-sizing: border-box;
+	line-height: 1.2;
+	background-color: var(--color-main-bg);
+	color: var(--color-text-secondary);
+	border: none;
+	border-radius: 1rem;
+}
+
+.image-converter-container .output-container {
+	padding: 0;
+}
+
+.image-converter-container button {
+	margin: 0;
+}
+
+.info-section-placeholder {
+	display: block;
+	color: var(--color-text-muted);
+}
+
+.info-section-label {
+	display: block;
+	color: #9cdcfe;
+}
+
+.info-section-value {
+	color: #ce9178;
+}

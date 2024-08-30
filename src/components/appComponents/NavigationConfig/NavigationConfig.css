@@ -1,0 +1,66 @@
+.navigation-config {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.navigation-config .nav-items-list {
+	list-style-type: none;
+	padding: 0;
+	margin: 1.6rem 0 0.6rem 0;
+	flex-grow: 1;
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding-right: 10px;
+}
+
+.navigation-config .nav-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.5rem 0.7rem 0.5rem 1rem;
+	margin-bottom: 0.5rem;
+	background-color: var(--color-content-tertiary-bg);
+	border-radius: 4px;
+}
+
+.navigation-config .nav-item-drag-label-container {
+	display: flex;
+	gap: 0.6rem;
+	align-items: center;
+}
+
+.navigation-config .nav-item.hidden {
+	opacity: 0.5;
+}
+
+.navigation-config .nav-item.dragging {
+	background-color: var(--color-secondary-bg);
+}
+
+.navigation-config .drag-handle {
+	cursor: move;
+}
+
+.navigation-config .visibility-toggle {
+	background: none;
+	border: none;
+	cursor: pointer;
+	margin: 0;
+	border-radius: 50%;
+	padding: 0.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0;
+	transition: background-color 0.3s;
+}
+
+.navigation-config .visibility-toggle:hover {
+	background-color: rgba(255, 255, 255, 0.1);
+	border-radius: 50%;
+}
+
+.navigation-config .save-button {
+	margin-top: 1rem;
+}

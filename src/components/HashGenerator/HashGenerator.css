@@ -1,0 +1,6 @@
+/* HashGenerator.css */
+.output-pre {
+	white-space: pre-wrap;
+	word-break: break-all;
+	overflow-y: auto;
+}
