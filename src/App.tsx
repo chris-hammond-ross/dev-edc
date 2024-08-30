@@ -140,9 +140,13 @@ const Home: React.FC<HomeProps> = ({ onOpenSettings }) => (
 					</li>
 				</ul>
 				<p>
-					Explore our tools, customize the theme to you liking, hide any
-					tools from the navigation bar to don't require, rearrange the
-					tools, and please reach out to hello@devedc.com.
+					Explore our tools, customize the theme to your liking, hide any
+					tools from the navigation bar you don't require, rearrange the
+					tools.
+				</p>
+				<p>
+					To suggest any tool ideas, or just to say hello please,
+					get in touch at <strong>hello@devedc.com</strong>
 				</p>
 				<div className="cta-container">
 					<Link to="/quick-json" className="cta-button">
