@@ -1,0 +1,15 @@
+/* LogoGenerator.css */
+.logo-preview {
+	background-color: var(--color-main-bg);
+	border-radius: 1rem;
+	padding: 0.625rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex: 1;
+}
+
+.logo-preview svg {
+	max-width: 100%;
+	max-height: 300px;
+}

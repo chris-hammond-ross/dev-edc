@@ -1,0 +1,1578 @@
+Hi, I'm working on a React app that uses Typescript. The idea of the app is to provide a collection of developer tools that can while working on software development projects. It's called Dev EDC, which is play on the term EDC (every day carry) which relates to survival gear. Here are a few example of the components I've already created:
+
+Dummy JSON generator
+JWT Decoder
+Text Formatter
+UUID Generator
+Diff Checker
+Image to Base64 Converter
+Text Formatter
+Color Converter
+Logo Generator
+Any many more...
+
+The app is a purely front-end app, with out any backend of database. Although users can still customize the app by setting theme colors, or reordering nav items, or hidding them all together, by going into the settings and configuring the settings which are persisted in the browsers localStorage. The user is even able to export and import their settings, to be used on computers without their settings saved.
+
+I'd like to now show you a couple examples of the components, so I can give you an idea of how I like to structure the code, and also gives you an idea of the styling, and layout of the markup.
+
+Here's an example of the HtmlEntityConverter component:
+
+import React, { useState, useEffect } from "react";
+import { Modal, ModalProps } from "../../utils";
+import "./HtmlEntityConverter.css";
+
+const HtmlEntityConverter: React.FC = () => {
+	const [inputText, setInputText] = useState<string>("");
+	const [encodedText, setEncodedText] = useState<string>("");
+	const [decodedText, setDecodedText] = useState<string>("");
+	const [isAlertModalOpen, setIsAlertModalOpen] = useState<boolean>(false);
+	const [alertMessage, setAlertMessage] = useState<string>("");
+	const [alertTheme, setAlertTheme] =
+		useState<ModalProps["theme"]>("default");
+
+	useEffect(() => {
+		encodeAndDecodeText(inputText);
+	}, [inputText]);
+
+	const encodeAndDecodeText = (text: string): void => {
+		// Encoding
+		const encoded = text
+			.replace(/&/g, "&amp;")
+			.replace(/</g, "&lt;")
+			.replace(/>/g, "&gt;")
+			.replace(/"/g, "&quot;")
+			.replace(/'/g, "&#039;");
+
+		setEncodedText(encoded);
+
+		// Decoding
+		const decoded = text
+			.replace(/&amp;/g, "&")
+			.replace(/&lt;/g, "<")
+			.replace(/&gt;/g, ">")
+			.replace(/&quot;/g, '"')
+			.replace(/&#039;/g, "'")
+			.replace(/&#39;/g, "'");
+
+		setDecodedText(decoded);
+	};
+
+	const handleInputChange = (
+		e: React.ChangeEvent<HTMLTextAreaElement>,
+	): void => {
+		setInputText(e.target.value);
+	};
+
+	const formatInput = (): void => {
+		if (inputText) {
+			const noExcessWhitespace = inputText
+				.split("\n")
+				.map((line) => line.replace(/\s+/g, " ").trim())
+				.join("\n")
+				.trim();
+
+			setInputText(noExcessWhitespace);
+		}
+	};
+
+	const showExample = (): void => {
+		const htmlExampleString = `<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Hello World</h1>
+<p>This is a paragraph</p>
+<div class="example-class">This is an element with a class</div>
+
+</body>
+</html>
+		`;
+		setInputText(htmlExampleString);
+	};
+
+	const copyToClipboard = (text: string): void => {
+		navigator.clipboard
+			.writeText(text)
+			.then(() => {
+				setAlertMessage("Copied to clipboard!");
+				setAlertTheme("success");
+				setIsAlertModalOpen(true);
+			})
+			.catch(() => {
+				setAlertMessage(
+					"Failed to copy. Please try selecting and copying manually.",
+				);
+				setAlertTheme("error");
+				setIsAlertModalOpen(true);
+			});
+	};
+
+	return (
+		<>
+			<div className="toolbar">
+				<h2>HTML Entity Encoder/Decoder</h2>
+				<div className="toolbar-button-container">
+					<button onClick={() => showExample()}>Example</button>
+				</div>
+			</div>
+			<div className="component-container">
+				<div className="input-container">
+					<textarea
+						spellCheck={false}
+						value={inputText}
+						onChange={handleInputChange}
+						placeholder="Enter your text"
+					/>
+					<div className="button-container">
+						<button onClick={() => formatInput()}>
+							Format Input
+						</button>
+						<button onClick={() => setInputText("")}>Clear</button>
+					</div>
+				</div>
+				<div className="output-container">
+					<div className="output-segment">
+						<h3>Encoded HTML Entities</h3>
+						<textarea
+							spellCheck={false}
+							value={encodedText}
+							readOnly
+							placeholder="Encoded text will appear here"
+						/>
+						<button
+							onClick={() => copyToClipboard(encodedText)}
+							disabled={!encodedText}
+						>
+							Copy
+						</button>
+					</div>
+					<div className="output-segment">
+						<h3>Decoded Text</h3>
+						<textarea
+							spellCheck={false}
+							value={decodedText}
+							readOnly
+							placeholder="Decoded text will appear here"
+						/>
+						<button
+							onClick={() => copyToClipboard(decodedText)}
+							disabled={!decodedText}
+						>
+							Copy
+						</button>
+					</div>
+				</div>
+			</div>
+			<Modal
+				isOpen={isAlertModalOpen}
+				onClose={() => setIsAlertModalOpen(false)}
+				type="alert"
+				theme={alertTheme}
+				autoClose={1}
+			>
+				{alertMessage}
+			</Modal>
+		</>
+	);
+};
+
+export default HtmlEntityConverter;
+
+Here is an example of the TextFormatter component:
+
+import React, { useState, useEffect } from "react";
+import { Modal, ModalProps } from "../../utils";
+import "./TextFormatter.css";
+
+interface FormattedTextType {
+	noExcessWhitespace: string;
+	noLineBreaks: string;
+}
+
+const TextFormatter: React.FC = () => {
+	const [inputText, setInputText] = useState<string>("");
+	const [formattedTexts, setFormattedTexts] = useState<FormattedTextType>({
+		noExcessWhitespace: "",
+		noLineBreaks: "",
+	});
+	const [isAlertModalOpen, setIsAlertModalOpen] = useState<boolean>(false);
+	const [alertMessage, setAlertMessage] = useState<string>("");
+	const [alertTheme, setAlertTheme] =
+		useState<ModalProps["theme"]>("default");
+
+	useEffect(() => {
+		formatText(inputText);
+	}, [inputText]);
+
+	const formatText = (text: string): void => {
+		// Remove excess whitespace while keeping line breaks
+		const noExcessWhitespace = text
+			.split("\n")
+			.map((line) => line.replace(/\s+/g, " ").trim())
+			.join("\n")
+			.trim();
+
+		// Remove all line breaks
+		const noLineBreaks = text
+			.replace(/[\r\n]+/g, " ")
+			.replace(/\s+/g, " ")
+			.trim();
+
+		setFormattedTexts({
+			noExcessWhitespace,
+			noLineBreaks,
+		});
+	};
+
+	const handleInputChange = (
+		e: React.ChangeEvent<HTMLTextAreaElement>,
+	): void => {
+		setInputText(e.target.value);
+	};
+
+	const clearInput = (): void => {
+		setInputText("");
+	};
+
+	const copyToClipboard = (text: string): void => {
+		navigator.clipboard
+			.writeText(text)
+			.then(() => {
+				setAlertMessage("Copied to clipboard!");
+				setAlertTheme("success");
+				setIsAlertModalOpen(true);
+			})
+			.catch(() => {
+				setAlertMessage(
+					"Failed to copy. Please try selecting and copying manually.",
+				);
+				setAlertTheme("error");
+				setIsAlertModalOpen(true);
+			});
+	};
+
+	return (
+		<>
+			<div className="toolbar">
+				<h2>Text Formatter</h2>
+			</div>
+			<div className="component-container">
+				<div className="input-container">
+					<textarea
+						spellCheck={false}
+						value={inputText}
+						onChange={handleInputChange}
+						placeholder="Enter your text"
+					/>
+					<button onClick={() => clearInput()}>Clear</button>
+				</div>
+				<div className="output-container">
+					<div className="output-segment">
+						<h3>No Excess Whitespace</h3>
+						<textarea
+							spellCheck={false}
+							value={formattedTexts.noExcessWhitespace}
+							readOnly
+							placeholder="Formatted text will appear here"
+						/>
+						<button
+							onClick={() =>
+								copyToClipboard(
+									formattedTexts.noExcessWhitespace,
+								)
+							}
+							disabled={!formattedTexts.noExcessWhitespace}
+						>
+							Copy
+						</button>
+					</div>
+					<div className="output-segment">
+						<h3>No Line Breaks</h3>
+						<textarea
+							spellCheck={false}
+							value={formattedTexts.noLineBreaks}
+							readOnly
+							placeholder="Formatted text will appear here"
+						/>
+						<button
+							onClick={() =>
+								copyToClipboard(formattedTexts.noLineBreaks)
+							}
+							disabled={!formattedTexts.noLineBreaks}
+						>
+							Copy
+						</button>
+					</div>
+				</div>
+			</div>
+			<Modal
+				isOpen={isAlertModalOpen}
+				onClose={() => setIsAlertModalOpen(false)}
+				type="alert"
+				theme={alertTheme}
+				autoClose={1}
+			>
+				{alertMessage}
+			</Modal>
+		</>
+	);
+};
+
+export default TextFormatter;
+
+Here is an example of the UUIDGenerator component:
+
+import React, { useState, useEffect } from "react";
+import { Modal, ModalProps } from "../../utils";
+import "./UUIDGenerator.css";
+
+const UUIDGenerator: React.FC = () => {
+	const [uuids, setUuids] = useState<string[]>([]);
+	const [count, setCount] = useState<number>(10);
+	const [isAlertModalOpen, setIsAlertModalOpen] = useState<boolean>(false);
+	const [alertMessage, setAlertMessage] = useState<string>("");
+	const [alertTheme, setAlertTheme] =
+		useState<ModalProps["theme"]>("default");
+
+	const generateUUID = (): string => {
+		return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+			/[xy]/g,
+			function (c: string) {
+				const r = (Math.random() * 16) | 0;
+				const v = c === "x" ? r : (r & 0x3) | 0x8;
+				return v.toString(16);
+			},
+		);
+	};
+
+	const handleGenerate = (): void => {
+		const newUuids = Array(count)
+			.fill(null)
+			.map(() => generateUUID());
+		setUuids(newUuids);
+	};
+
+	const handleCountChange = (
+		e: React.ChangeEvent<HTMLInputElement>,
+	): void => {
+		const newCount = parseInt(e.target.value, 10);
+		setCount(isNaN(newCount) ? 1 : Math.max(1, newCount));
+	};
+
+	const copyToClipboard = (): void => {
+		const text = uuids.join("\n");
+		navigator.clipboard
+			.writeText(text)
+			.then(() => {
+				setAlertMessage("Copied to clipboard!");
+				setAlertTheme("success");
+				setIsAlertModalOpen(true);
+			})
+			.catch(() => {
+				setAlertMessage(
+					"Failed to copy. Please try selecting and copying manually.",
+				);
+				setAlertTheme("error");
+				setIsAlertModalOpen(true);
+			});
+	};
+
+	useEffect(() => {
+		handleGenerate();
+	}, [count]);
+
+	return (
+		<>
+			<div className="toolbar">
+				<h2>UUID Generator</h2>
+				<div className="toolbar-button-container">
+					<div className="toolbar-button-lable-container">
+						<label htmlFor="uuid-count">Number of UUIDs:</label>
+						<input
+							id="uuid-count"
+							type="number"
+							min="1"
+							value={count}
+							onChange={handleCountChange}
+						/>
+					</div>
+				</div>
+			</div>
+			<div className="component-container">
+				<div className="input-container">
+					<textarea
+						spellCheck={false}
+						value={uuids.join("\n")}
+						readOnly
+						placeholder="Output will appear here"
+					/>
+					<button onClick={copyToClipboard}>Copy</button>
+				</div>
+			</div>
+			<Modal
+				isOpen={isAlertModalOpen}
+				onClose={() => setIsAlertModalOpen(false)}
+				type="alert"
+				theme={alertTheme}
+				autoClose={1}
+			>
+				{alertMessage}
+			</Modal>
+		</>
+	);
+};
+
+export default UUIDGenerator;
+
+And for some further context, I'll include the App.css file, which provides much of the layout styles for the app:
+
+@import url("https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playwrite+CZ:wght@100&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Playwrite+HU:wght@100..400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Reddit+Mono:wght@200..900&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+
+:root {
+	--color-toolbar-bg: #5d6d97;
+	--color-nav-bg: #424f6f;
+	--color-nav-main: #262c3d;
+	--color-nav-secondary: #0f4c8f;
+	--color-nav-tertiary: #5672c3;
+
+	--color-text-main: #ffffff;
+	--color-text-secondary: #d4d4d4;
+	--color-text-tertiary: #9cdcfe;
+	--color-text-muted: #757575;
+
+	--color-main-bg: #1a1a1a;
+	--color-secondary-bg: #232323;
+	--color-tertiary-bg: #515151;
+
+	--color-content-main-bg: #353535;
+	--color-content-secondary-bg: #434343;
+	--color-content-tertiary-bg: #676767;
+}
+
+::placeholder {
+	color: var(--color-text-muted);
+	opacity: 1; /* Firefox */
+}
+
+::-webkit-scrollbar {
+	background-color: rgba(255, 255, 255, 0);
+	width: 0.5rem;
+	height: 0.5rem;
+}
+
+::-webkit-scrollbar-track {
+	background-color: rgba(255, 255, 255, 0);
+	opacity: 0;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: var(--color-content-tertiary-bg);
+	border-radius: 1rem;
+}
+
+::-webkit-scrollbar-button {
+	display: none;
+}
+
+::selection {
+	background: var(--color-nav-tertiary);
+	color: var(--color-text-main);
+}
+::-moz-selection {
+	background: var(--color-nav-tertiary);
+	color: var(--color-text-main);
+}
+
+textarea {
+	border: none;
+	outline: none;
+	resize: none;
+}
+
+textarea:focus-visible {
+	border: none;
+	outline: none;
+}
+
+select {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	text-indent: 1px;
+	text-overflow: "";
+}
+
+select option {
+	text-align: left;
+	border-radius: 6px;
+}
+
+label {
+	color: var(--color-text-secondary);
+}
+
+:focus-visible {
+	outline: none;
+}
+
+.dragging {
+	position: static !important;
+}
+
+html,
+body {
+	font-size: 16px;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	font-family: "Work Sans", sans-serif;
+	font-optical-sizing: auto;
+	font-weight: 300;
+	font-style: normal;
+}
+
+button {
+	color: var(--color-text-main);
+}
+
+body,
+#root,
+.app-container {
+	height: 100vh;
+	height: 100svh;
+}
+
+.app-container {
+	display: flex;
+	flex-direction: column;
+}
+
+.app-toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: var(--color-toolbar-bg);
+	padding: 0 1.25rem;
+	min-height: 3.125rem;
+	height: 3.125rem;
+	box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+}
+
+.app-toolbar h1 {
+	font-size: 2rem;
+	/*font-family: "Fira Mono", monospace;*/
+	font-family: "Reddit Mono", monospace;
+	letter-spacing: 0.4px;
+	font-optical-sizing: auto;
+	font-weight: 200;
+	font-style: normal;
+	margin: 0;
+}
+
+.app-toolbar-button-container {
+	display: flex;
+}
+
+.toolbar-icon {
+	background: none;
+	border-radius: 50%;
+	background-color: rgba(255, 255, 255, 0);
+	cursor: pointer;
+	color: var(--color-text-main);
+	padding: 0.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0;
+	transition: background-color 0.3s;
+}
+.toolbar-icon:hover {
+	background-color: rgba(255, 255, 255, 0.1);
+	border-radius: 50%;
+}
+
+.main-container {
+	display: flex;
+	flex-grow: 1;
+	overflow: hidden;
+}
+
+.nav-container {
+	width: 12.5rem;
+	display: flex;
+	justify-content: space-between;
+	flex-direction: column;
+	background-color: var(--color-nav-bg);
+	padding: 1.2rem;
+	overflow-y: auto;
+}
+
+.navigation {
+	display: flex;
+	flex-direction: column;
+	gap: 0.625rem;
+}
+
+.nav-button {
+	display: block;
+	padding: 0.625rem;
+	background-color: var(--color-nav-main);
+	color: var(--color-text-tertiary);
+	text-decoration: none;
+	text-align: center;
+	border-radius: 0.3125rem;
+	transition:
+		background-color 0.3s,
+		color 0.3s;
+}
+
+.nav-button:hover {
+	background-color: var(--color-nav-secondary);
+	color: var(--color-text-main);
+}
+
+.nav-button.active {
+	background-color: var(--color-nav-tertiary);
+	color: var(--color-text-main);
+}
+
+main {
+	display: flex;
+	flex: 1;
+}
+
+.content {
+	width: 100%;
+	background-color: var(--color-content-secondary-bg);
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	padding: 0;
+}
+
+.container {
+	display: flex;
+	gap: 1.2rem;
+	width: calc(100% - 216px);
+	height: calc(100% - 123px);
+	background-color: var(--color-content-secondary-bg);
+}
+
+.content .toolbar {
+	background-color: var(--color-content-main-bg);
+	padding: 10px 20px 10px 26px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 3.3rem;
+}
+
+.content .toolbar h2 {
+	font-family: "Quicksand", sans-serif;
+	font-size: 1.6rem;
+	color: var(--color-text-secondary);
+	margin: 0;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.toolbar-button-container {
+	display: flex;
+	flex-direction: row;
+	gap: 1.2rem;
+	align-items: center;
+}
+
+.toolbar-button-lable-container {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.8rem;
+}
+
+.component-container {
+	overflow: hidden;
+	display: flex;
+	flex-direction: row;
+	flex: 1;
+	gap: 1.2rem;
+	padding: 1.2rem;
+	background-color: var(--color-content-secondary-bg);
+}
+
+main h3 {
+	font-size: 1rem;
+	margin: 0;
+}
+
+main .toolbar button,
+main .toolbar select,
+main .toolbar input {
+	/*background-color: #4caf50;*/
+	background-color: var(--color-content-tertiary-bg);
+	border: none;
+	color: var(--color-text-main);
+	padding: 10px 20px;
+	text-align: center;
+	text-decoration: none;
+	display: flex;
+	align-items: center;
+	font-size: 16px;
+	margin: 4px 2px;
+	cursor: pointer;
+	border-radius: 5px;
+	height: 41px;
+}
+
+.toolbar input[type="number"] {
+	width: 4rem;
+	cursor: unset;
+	height: 21px;
+}
+
+.button-container {
+	display: flex;
+	justify-content: flex-end;
+	gap: 1.2rem;
+	margin: 0;
+}
+
+main button {
+	border-radius: 8px;
+	border: none;
+	padding: 0.6em 1.2em;
+	margin: 0;
+	font-size: 1em;
+	font-weight: 500;
+	font-family: inherit;
+	background-color: var(--color-main-bg);
+	color: var(--color-text-secondary);
+	cursor: pointer;
+	width: 100%;
+	white-space: nowrap;
+	transition:
+		background-color 0.3s,
+		color 0.3s;
+}
+
+main button:hover {
+	background-color: var(--color-nav-tertiary);
+	color: var(--color-text-main);
+}
+
+main textarea,
+main pre,
+main .output-pre {
+	font-family: "IBM Plex Mono", monospace !important;
+	background-color: var(--color-main-bg);
+	color: var(--color-text-secondary);
+	padding: 0.625rem;
+	border-radius: 1rem;
+	overflow: auto;
+	font-size: 0.938rem;
+	margin: 0;
+	flex: 1;
+}
+
+main .toolbar {
+	background-color: var(--color-content-main-bg);
+	padding: 10px 20px 10px 26px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 3.3rem;
+}
+
+main .controls {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+main .toolbar-button-container {
+	display: flex;
+	flex-direction: row;
+	gap: 1.2rem;
+	align-items: center;
+}
+
+main .toolbar-button-lable-container {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.8rem;
+}
+
+main .input-container,
+main .output-container {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	background-color: var(--color-content-secondary-bg);
+	gap: 1.2rem;
+}
+
+main .output-container {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	gap: 1.2rem;
+}
+
+main .output-container .output-segment {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 1.2rem;
+	overflow: hidden;
+}
+
+.faux-placeholder {
+	color: var(--color-text-muted);
+	font-family: "IBM Plex Mono", monospace;
+	font-size: 0.938rem;
+	background-color: var(--color-main-bg);
+}
+
+.faux-output {
+	font-family: "IBM Plex Mono", monospace;
+	font-size: 0.938rem;
+	background-color: var(--color-main-bg);
+	color: var(--color-text-secondary);
+	padding: 0.625rem;
+	border-radius: 1rem;
+	flex: 1;
+}
+
+.home-page {
+	max-width: 800px;
+	margin: 0 auto;
+	padding: 2rem;
+	color: var(--color-text-main);
+}
+
+.home-page h1 {
+	font-size: 2.5rem;
+	color: var(--color-text-tertiary);
+	margin-bottom: 1rem;
+	font-family: "Playwrite HU", cursive;
+	font-optical-sizing: auto;
+	font-weight: 200;
+	font-style: normal;
+}
+
+.home-page h2 {
+	font-size: 1.8rem;
+	color: var(--color-text-main);
+	margin-top: 2rem;
+	margin-bottom: 1rem;
+	font-weight: 400;
+}
+
+.home-page p,
+.home-page li {
+	font-size: 1rem;
+	line-height: 1.6;
+	margin-bottom: 1rem;
+}
+
+.home-page ul {
+	padding-left: 1.5rem;
+}
+
+.home-page li {
+	margin-bottom: 0.5rem;
+}
+
+.home-page strong {
+	color: var(--color-text-tertiary);
+}
+
+.cta-container {
+	display: flex;
+	gap: 1rem;
+	margin-top: 2rem;
+}
+
+.cta-button {
+	display: inline-block;
+	padding: 0.8rem 1.5rem;
+	background-color: var(--color-nav-main);
+	color: var(--color-text-tertiary);
+	text-decoration: none;
+	border-radius: 0.3rem;
+	font-weight: 500;
+	width: 100%;
+	text-align: center;
+	transition:
+		background-color 0.3s,
+		color 0.3s;
+}
+
+.cta-button:hover {
+	background-color: var(--color-nav-secondary);
+	color: var(--color-text-main);
+}
+
+/*main .content .button-container {
+	margin-top: 20px;
+	display: flex;
+	justify-content: flex-end;
+}*/
+
+/* JSON Syntax Highlighting */
+.json-key {
+	color: #9cdcfe;
+}
+
+.json-string {
+	color: #ce9178;
+}
+
+.json-number {
+	color: #b5cea8;
+}
+
+.json-boolean {
+	color: #569cd6;
+}
+
+.json-null {
+	color: #569cd6;
+}
+
+.json-bracket {
+	color: #ffd700;
+}
+
+/* YAML Syntax Highlighting */
+.yaml-key {
+	color: #9cdcfe;
+}
+
+.yaml-value {
+	color: #ce9178;
+}
+
+.yaml-list {
+	color: #ffd700;
+}
+
+/* CSV Syntax Highlighting */
+.csv-header {
+	color: #9cdcfe;
+	font-weight: bold;
+}
+
+.csv-cell {
+	color: #ce9178;
+}
+
+And lastly, here is the App.tsx file:
+
+import React, { useState, useEffect, MouseEventHandler } from "react";
+import {
+	BrowserRouter as Router,
+	Route,
+	Link,
+	Routes,
+	useLocation,
+} from "react-router-dom";
+import { Settings } from "lucide-react";
+import {
+	QuickJSONGenerator,
+	Base64EncoderDecoder,
+	JWTDecoder,
+	CodeMinifierPrettifier,
+	UUIDGenerator,
+	HashGenerator,
+	DiffChecker,
+	LoremIpsumGenerator,
+	ImageToBase64Converter,
+	TimestampConverter,
+	TextFormatter as TextFormatterComponent,
+	HtmlEntityConverter,
+	DataConverter as DataConverterComponent,
+	ColorConverter,
+	MarkdownPreviewer,
+	URLDecoder,
+	LogoGenerator as LogoGeneratorComponent,
+} from "./components";
+import { Modal } from "./utils";
+import { NavigationConfig, ThemeConfig } from "./components/appComponents";
+import "./App.css";
+
+interface ToolbarProps {
+	onOpenSettings: MouseEventHandler;
+}
+
+const Toolbar: React.FC<ToolbarProps> = ({ onOpenSettings }) => (
+	<div className="app-toolbar">
+		<h1>&#123; Dev EDC &#125;</h1>
+		<div className="app-toolbar-button-container">
+			<Settings
+				className="toolbar-icon"
+				size={24}
+				onClick={onOpenSettings}
+			/>
+		</div>
+	</div>
+);
+
+// Suppress specific warning
+const originalError = console.error;
+console.error = (...args) => {
+	if (args[0].includes("defaultProps")) return;
+	originalError.call(console, ...args);
+};
+
+const Navigation: React.FC<{ items: Array<{ to: string; label: string }> }> = ({
+	items,
+}) => {
+	const location = useLocation();
+
+	return (
+		<div className="nav-container">
+			<nav className="navigation">
+				{items.map((item) => (
+					<Link
+						key={item.to}
+						to={item.to}
+						className={`nav-button ${location.pathname === item.to ? "active" : ""}`}
+					>
+						{item.label}
+					</Link>
+				))}
+			</nav>
+			<a
+				href="https://www.buymeacoffee.com/devedc"
+				target="_blank"
+				style={{ display: "flex", marginTop: "1rem" }}
+			>
+				<img
+					src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+					alt="Buy Me A Coffee"
+					width={"100%"}
+				></img>
+			</a>
+		</div>
+	);
+};
+
+interface HomeProps {
+	onOpenSettings: MouseEventHandler;
+}
+
+const Home: React.FC<HomeProps> = ({ onOpenSettings }) => (
+	<div className="content">
+		<div className="component-container">
+			<div className="home-page">
+				<h1>Welcome to Dev EDC</h1>
+				<p>
+					Dev EDC is your Swiss Army knife for software development.
+					Just as EDC gear prepares you for daily challenges, Dev EDC
+					equips you with essential tools for your coding journey.
+				</p>
+				<p>
+					Before building Dev EDC, while working at my day job, I
+					would constantly find myself opening up a new tab in my
+					browser, and Googling <i>url decoder</i>, clicking on the
+					first result and pasting in the query I was debugging, or
+					Google <i>whitespace remover</i>, or{" "}
+					<i>online diff checker</i> during the course of the day.
+				</p>
+				<p>
+					I came to realise I was forever visiting the same four or
+					five websites to perform the sames tasks over and over, and I thought
+				</p>
+				<h2>What Dev EDC Offers:</h2>
+				<ul>
+					<li>
+						<strong>Versatility:</strong> From JSON generation to
+						JWT decoding, text formatting to UUID creation, we've
+						packed a wide array of functionalities into one sleek
+						interface.
+					</li>
+					<li>
+						<strong>Efficiency:</strong> Say goodbye to browser tab
+						overload. Access all your frequently used tools in one
+						place, saving time and mental energy.
+					</li>
+					<li>
+						<strong>Customization:</strong> Tailor Dev EDC to your
+						needs. Adjust themes, reorder tools, and save your
+						preferences locally or export them for use across
+						devices.
+					</li>
+					<li>
+						<strong>Offline Capability:</strong> No internet? No
+						problem. Dev EDC works offline, ensuring you're never
+						without your trusted toolkit.
+					</li>
+				</ul>
+				<p>
+					Explore our tools using the navigation menu, and discover
+					how Dev EDC can transform your development process. Whether
+					you're a seasoned professional or just starting your coding
+					journey, Dev EDC is here to make your life easier, one tool
+					at a time.
+				</p>
+				<div className="cta-container">
+					<Link to="/quick-json" className="cta-button">
+						Try JSON Generator
+					</Link>
+					<button onClick={onOpenSettings} className="cta-button">
+						Customize Dev EDC
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+);
+const QuickJSON: React.FC = () => (
+	<div className="content">
+		<QuickJSONGenerator />
+	</div>
+);
+const Base64: React.FC = () => (
+	<div className="content">
+		<Base64EncoderDecoder />
+	</div>
+);
+const JWT: React.FC = () => (
+	<div className="content">
+		<JWTDecoder />
+	</div>
+);
+const Regex: React.FC = () => (
+	<div className="content">
+		<h2>Regular Expression Tester</h2>
+		<p>Tool content coming soon...</p>
+	</div>
+);
+const Minifier: React.FC = () => (
+	<div className="content">
+		<CodeMinifierPrettifier />
+	</div>
+);
+const Markdown: React.FC = () => (
+	<div className="content">
+		<MarkdownPreviewer />
+	</div>
+);
+const ColorPicker: React.FC = () => (
+	<div className="content">
+		<ColorConverter />
+	</div>
+);
+const UUID: React.FC = () => (
+	<div className="content">
+		<UUIDGenerator />
+	</div>
+);
+const Hash: React.FC = () => (
+	<div className="content">
+		<HashGenerator />
+	</div>
+);
+const SQLFormatter: React.FC = () => (
+	<div className="content">
+		<h2>SQL Formatter</h2>
+		<p>Tool content coming soon...</p>
+	</div>
+);
+const DiffCheck: React.FC = () => (
+	<div className="content">
+		<DiffChecker />
+	</div>
+);
+const HTMLEntity: React.FC = () => (
+	<div className="content">
+		<HtmlEntityConverter />
+	</div>
+);
+const DataConverter: React.FC = () => (
+	<div className="content">
+		<DataConverterComponent />
+	</div>
+);
+const CronGenerator: React.FC = () => (
+	<div className="content">
+		<h2>Cron Expression Generator/Explainer</h2>
+		<p>Tool content coming soon...</p>
+	</div>
+);
+const LoremIpsum: React.FC = () => (
+	<div className="content">
+		<LoremIpsumGenerator />
+	</div>
+);
+const ImageBase64: React.FC = () => (
+	<div className="content">
+		<ImageToBase64Converter />
+	</div>
+);
+const Timestamp: React.FC = () => (
+	<div className="content">
+		<TimestampConverter />
+	</div>
+);
+const TextFormatter: React.FC = () => (
+	<div className="content">
+		<TextFormatterComponent />
+	</div>
+);
+const URLDecoderEncoder: React.FC = () => (
+	<div className="content">
+		<URLDecoder />
+	</div>
+);
+const LogoGenerator: React.FC = () => (
+	<div className="content">
+		<LogoGeneratorComponent />
+	</div>
+);
+
+interface NavItem {
+	to: string;
+	label: string;
+	id: string;
+	hidden: boolean;
+}
+
+interface ThemeColors {
+	"toolbar-bg": string;
+	"nav-bg": string;
+	"nav-main": string;
+	"nav-secondary": string;
+	"nav-tertiary": string;
+	"text-main": string;
+	"text-secondary": string;
+	"text-tertiary": string;
+	"text-muted": string;
+	"main-bg": string;
+	"secondary-bg": string;
+	"tertiary-bg": string;
+	"content-main-bg": string;
+	"content-secondary-bg": string;
+	"content-tertiary-bg": string;
+}
+
+const defaultTheme: ThemeColors = {
+	"toolbar-bg": "#5d6d97",
+	"nav-bg": "#424f6f",
+	"nav-main": "#262c3d",
+	"nav-secondary": "#0f4c8f",
+	"nav-tertiary": "#5672c3",
+	"text-main": "#ffffff",
+	"text-secondary": "#d4d4d4",
+	"text-tertiary": "#9cdcfe",
+	"text-muted": "#757575",
+	"main-bg": "#1a1a1a",
+	"secondary-bg": "#232323",
+	"tertiary-bg": "#515151",
+	"content-main-bg": "#353535",
+	"content-secondary-bg": "#434343",
+	"content-tertiary-bg": "#676767",
+};
+
+const App: React.FC = () => {
+	const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+	const [navItems, setNavItems] = useState<NavItem[]>([
+		{ to: "/", label: "Home", id: "home", hidden: false },
+		{
+			to: "/quick-json",
+			label: "Quick JSON",
+			id: "quick-json",
+			hidden: false,
+		},
+		{
+			to: "/base64",
+			label: "Base64 Encoder/Decoder",
+			id: "base64",
+			hidden: false,
+		},
+		{ to: "/jwt", label: "JWT Decoder", id: "jwt", hidden: false },
+		{
+			to: "/minifier",
+			label: "Code Minifier",
+			id: "minifier",
+			hidden: false,
+		},
+		{ to: "/uuid", label: "UUID Generator", id: "uuid", hidden: false },
+		{ to: "/hash", label: "Hash Generator", id: "hash", hidden: false },
+		{ to: "/diff", label: "Diff Checker", id: "diff", hidden: false },
+		{
+			to: "/lorem-ipsum",
+			label: "Lorem Ipsum",
+			id: "lorem-ipsum",
+			hidden: false,
+		},
+		{
+			to: "/image-base64",
+			label: "Image to Base64",
+			id: "image-base64",
+			hidden: false,
+		},
+		{
+			to: "/timestamp",
+			label: "Timestamp Converter",
+			id: "timestamp",
+			hidden: false,
+		},
+		{
+			to: "/text-formatter",
+			label: "Whitespace/Linebreak Formatter",
+			id: "text-formatter",
+			hidden: false,
+		},
+		{
+			to: "/html-entity",
+			label: "HTML Entity Encoder/Decoder",
+			id: "html-entity",
+			hidden: false,
+		},
+		{
+			to: "/data-converter",
+			label: "Data Converter JSON/YAML/CSV",
+			id: "data-converter",
+			hidden: false,
+		},
+		{
+			to: "/color-converter",
+			label: "Color Converter",
+			id: "color-converter",
+			hidden: false,
+		},
+		{
+			to: "/markdown",
+			label: "Markdown Preview",
+			id: "markdown",
+			hidden: false,
+		},
+		{
+			to: "/url-decoder",
+			label: "URL Decoder/Encoder",
+			id: "url-decoder",
+			hidden: false,
+		},
+		{
+			to: "/logo-generator",
+			label: "Logo Generator",
+			id: "logo-generator",
+			hidden: false,
+		},
+		/*{ to: "/regex", label: "Regular Expression Tester", id: "regex", hidden: false, },
+		{ to: "/cron", label: "Cron Expression Generator", id: "cron", hidden: false, },
+		{ to: "/sql-formatter", label: "SQL Formatter", id: "sql-formatter", hidden: false, },*/
+	]);
+	const [tempNavItems, setTempNavItems] = useState<NavItem[]>(navItems);
+	const [savedTheme, setSavedTheme] = useState<ThemeColors>(() => {
+		const stored = localStorage.getItem("userTheme");
+		return stored ? JSON.parse(stored) : defaultTheme;
+	});
+	const [tempTheme, setTempTheme] = useState<ThemeColors>(savedTheme);
+
+	useEffect(() => {
+		const savedNavItems = localStorage.getItem("navItems");
+		if (savedNavItems) {
+			const parsedNavItems = JSON.parse(savedNavItems);
+			setNavItems(parsedNavItems);
+			setTempNavItems(parsedNavItems);
+		}
+	}, []);
+
+	useEffect(() => {
+		Object.entries(savedTheme).forEach(([key, value]) => {
+			document.documentElement.style.setProperty(`--color-${key}`, value);
+		});
+		console.log("theme changed 1");
+	}, [savedTheme]);
+
+	const openSettings = (): void => {
+		setTempTheme(savedTheme); // Reset tempTheme to saved theme when opening settings
+		setIsSettingsOpen(true);
+	};
+
+	const handleCloseSettings = (): void => {
+		setIsSettingsOpen(false);
+		setTempTheme(savedTheme);
+		Object.entries(savedTheme).forEach(([key, value]) => {
+			document.documentElement.style.setProperty(`--color-${key}`, value);
+		});
+		console.log("theme changed 2");
+		setTempNavItems(navItems);
+	};
+
+	const handleSaveSettings = (): void => {
+		setSavedTheme(tempTheme);
+		localStorage.setItem("userTheme", JSON.stringify(tempTheme));
+		setNavItems(tempNavItems);
+		localStorage.setItem("navItems", JSON.stringify(tempNavItems));
+		setIsSettingsOpen(false);
+	};
+
+	const handleThemeChange = (newTheme: ThemeColors): void => {
+		if (isSettingsOpen) {
+			setTempTheme(newTheme);
+			// Apply the new theme temporarily while the modal is open
+			Object.entries(newTheme).forEach(([key, value]) => {
+				document.documentElement.style.setProperty(
+					`--color-${key}`,
+					value,
+				);
+			});
+			console.log("theme changed 3");
+		}
+	};
+
+	const handleTempNavItemsChange = (updatedNavItems: NavItem[]): void => {
+		setTempNavItems(updatedNavItems);
+	};
+
+	const settingsTabs = [
+		{
+			id: "navigation",
+			label: "Navigation",
+			content: (
+				<NavigationConfig
+					navItems={tempNavItems}
+					onSaveSettings={handleTempNavItemsChange}
+				/>
+			),
+		},
+		{
+			id: "appearance",
+			label: "Appearance",
+			content: (
+				<ThemeConfig
+					currentTheme={tempTheme}
+					onThemeChange={handleThemeChange}
+				/>
+			),
+		},
+		// Add more tabs as needed
+	];
+
+	return (
+		<Router>
+			<div className="app-container">
+				<Toolbar onOpenSettings={openSettings} />
+				<div className="main-container">
+					<Navigation
+						items={navItems.filter((item) => !item.hidden)}
+					/>
+					<main>
+						<Routes>
+							<Route
+								path="/"
+								element={<Home onOpenSettings={openSettings} />}
+							/>
+							<Route path="/quick-json" element={<QuickJSON />} />
+							<Route path="/base64" element={<Base64 />} />
+							<Route path="/jwt" element={<JWT />} />
+							<Route path="/regex" element={<Regex />} />
+							<Route path="/minifier" element={<Minifier />} />
+							<Route path="/markdown" element={<Markdown />} />
+							<Route path="/color" element={<ColorPicker />} />
+							<Route path="/uuid" element={<UUID />} />
+							<Route path="/hash" element={<Hash />} />
+							<Route
+								path="/url-decoder"
+								element={<URLDecoderEncoder />}
+							/>
+							<Route
+								path="/data-converter"
+								element={<DataConverter />}
+							/>
+							<Route
+								path="/sql-formatter"
+								element={<SQLFormatter />}
+							/>
+							<Route path="/diff" element={<DiffCheck />} />
+							<Route
+								path="/html-entity"
+								element={<HTMLEntity />}
+							/>
+							<Route path="/cron" element={<CronGenerator />} />
+							<Route
+								path="/lorem-ipsum"
+								element={<LoremIpsum />}
+							/>
+							<Route
+								path="/image-base64"
+								element={<ImageBase64 />}
+							/>
+							<Route path="/timestamp" element={<Timestamp />} />
+							<Route
+								path="/text-formatter"
+								element={<TextFormatter />}
+							/>
+							<Route
+								path="/color-converter"
+								element={<ColorPicker />}
+							/>
+							<Route path="/markdown" element={<Markdown />} />
+							<Route
+								path="/logo-generator"
+								element={<LogoGenerator />}
+							/>
+						</Routes>
+					</main>
+				</div>
+				<Modal
+					isOpen={isSettingsOpen}
+					onClose={handleCloseSettings}
+					size="large"
+					type="settings"
+					title="Settings"
+					footerActionLabel="Save Changes"
+					onFooterAction={handleSaveSettings}
+					tabs={settingsTabs}
+				>
+					<NavigationConfig
+						navItems={tempNavItems}
+						onSaveSettings={handleTempNavItemsChange}
+					/>
+				</Modal>
+			</div>
+		</Router>
+	);
+};
+
+export default App;
+
+I would like to add another component to the list of components. I would like to add a comprehensive list of symbols and emoji that can be copied quickly. For example, I will often Google "check mark" symbol, so that I can copy and paste a check mark symbol. The way that I would like to display this list, is to display a column with the symbol or emoji I would like to copy, a column with the name of that symbol or emoji, a column with the unicode value, a column with the HTML value, and finaly a column with a copy button. I would also like the list to be grouped into simple symbols, such as check marks, bullet points, tm sign, cross, music note, that sort of thing, and then a group for emojis. I would also like this list to be as comprehensive as possible. Thank you for your help :)
+
+I would like to add another component to the list of components. I would like to add a ColorPalettGenerater component. The idea behind this component would be to allows users to pick a number of colors based on different styles of color palettes, such as Complementary, Triad, Monochromatic, and so on. A root color can be selected, and based on the style of palette that is selected, and the number of outputs the user wants, an output of CSS root variables are given, with a naming convention as follows:
+
+User prefix (text input, optional) = "text"
+User suffix (text input, optional) = "content"
+
+output = 
+
+--color-text-primary-content: #353535;
+--color-text-secondary-content: #434343;
+--color-text-tertiary-content: #515151;
+--color-text-quaternary-content: #676767;
+--color-text-quinary-content: #757575;
+and so on...
+
+Could you help me create something like this in the style of my existing components?
+
+If you want to extend this component further in the future, here are a few ideas you might consider:
+
+Add support for alpha channel (RGBA and HSLA colors).
+Implement a color palette feature where users can save their favorite colors.
+Add accessibility features, such as displaying the contrast ratio for text legibility.
+Implement a color scheme generator (complementary, analogous, etc.) based on the selected color.
+
+Feel free to ask if you need any further assistance with this component or if you want to explore any of these additional features. Good luck with your React app!

@@ -1,0 +1,3 @@
+List of ASCII and Emoji symbols with titles, and unicode hex for users to copy (tick or checkmark ✓, maybe inside groups, chekcmark ✓ with ☑ or ✅ and so on)
+
+.bashrc promt generator - look at existing examples

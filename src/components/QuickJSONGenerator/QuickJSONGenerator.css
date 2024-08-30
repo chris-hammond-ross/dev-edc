@@ -1,0 +1,124 @@
+/* QuickJSONGenerator.css */
+
+/*.input-container {
+	position: relative;
+	padding: 1.2rem 0 1.2rem 1.2rem;
+}
+
+.output-container {
+	padding: 1.2rem 1.2rem 1.2rem 0;
+}*/
+
+.input-wrapper {
+	position: relative;
+	height: 100%;
+}
+
+#input,
+#highlight {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0.625rem;
+	font-family: "IBM Plex Mono", monospace !important;
+	font-size: 0.938rem;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	box-sizing: border-box;
+	line-height: normal;
+}
+
+#input {
+	color: rgba(255, 255, 255, 0);
+	background: transparent;
+	caret-color: var(--color-text-secondary);
+	resize: none;
+	z-index: 2;
+	border-radius: 1rem;
+	font-size: 0.938rem;
+	margin: 0;
+	flex: 1;
+	padding: 0.625rem;
+	line-height: normal;
+}
+
+#highlight {
+	background-color: var(--color-main-bg);
+	color: #ce9178;
+	overflow: auto;
+	pointer-events: none;
+	z-index: 1;
+	border-radius: 1rem;
+	font-size: 0.938rem;
+	margin: 0;
+	flex: 1;
+	padding: 0.625rem;
+	line-height: 1.5;
+}
+
+#output {
+	background-color: var(--color-main-bg);
+	color: var(--color-text-secondary);
+	padding: 10px;
+	overflow: auto;
+	flex-grow: 1;
+	font-family: monospace;
+	font-size: 14px;
+	white-space: pre-wrap;
+	border-radius: 16px;
+	margin: 0;
+}
+
+.button-container {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.button-container button {
+	width: 100%;
+}
+
+/* Syntax Highlighting for Input */
+.hl-property {
+	color: #9cdcfe;
+}
+
+.hl-type {
+	color: #4ec9b0;
+}
+
+.hl-bracket {
+	color: #ffd700;
+}
+
+.hl-number {
+	color: #b5cea8;
+}
+
+/* Syntax Highlighting for Output JSON */
+.json-key {
+	color: #9cdcfe;
+}
+
+.json-string {
+	color: #ce9178;
+}
+
+.json-number {
+	color: #b5cea8;
+}
+
+.json-boolean {
+	color: #569cd6;
+}
+
+.json-null {
+	color: #569cd6;
+}
+
+.json-bracket {
+	color: #ffd700;
+}
