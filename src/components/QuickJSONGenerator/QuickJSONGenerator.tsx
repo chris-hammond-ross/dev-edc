@@ -89,7 +89,7 @@ const QuickJSONGenerator: React.FC = () => {
 		f: "float",
 		b: "bool",
 		g: "guid",
-		e: "email",
+		em: "email",
 		u: "url",
 		p: "phone",
 		c: "color",
@@ -247,7 +247,12 @@ const QuickJSONGenerator: React.FC = () => {
 				/*return enumValues[
 					Math.floor(Math.random() * enumValues.length)
 				];*/
-				return "enum values"; // TODO: need to work on this
+				//return "enum values"; // TODO: need to work on this
+				if (type.startsWith("enum:")) {
+					const options = type.slice(5).split(",");
+					return options[Math.floor(Math.random() * options.length)];
+				}
+				return "Invalid enum format";
 			default:
 				return `Unsupported type: ${type}`;
 		}
